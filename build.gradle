@@ -1,0 +1,85 @@
+// springBootVersion 및 dependencyManagementVersion을 정의합니다. 이 변수들은 후속 블록에서 버전 관리에 사용됩니다.
+buildscript {
+	ext {
+		springBootVersion = '2.7.14'
+		dependencyManagementVersion = '1.0.15.RELEASE'
+		jwtVersion = '0.9.1'
+	}
+}
+
+// apply false는 여기에서는 필요하지 않은 특정 하위 프로젝트에 플러그인을 조건부로 적용하려는 경우에만 유용합니다.
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version "${springBootVersion}"
+	id 'io.spring.dependency-management' version "${dependencyManagementVersion}"
+}
+
+allprojects {
+	group = 'com.reservation'
+	version = '0.0.1-SNAPSHOT'
+
+	repositories {
+		mavenCentral()
+	}
+}
+
+subprojects {
+	apply plugin: 'java'
+	apply plugin: 'org.springframework.boot'
+	apply plugin: 'io.spring.dependency-management'
+
+	java {
+		/* 이 설정은 프로젝트의 소스 코드가 Java 11을 사용하여 컴파일되도록 지정합니다.
+        즉, Java 11 기능과 구문을 사용할 수 있습니다. */
+		sourceCompatibility = '11'
+		/* 이 설정은 생성된 바이트코드가 Java 11 JVM과 호환되도록 지정합니다.
+        즉, 이 코드를 실행하려면 Java 11 이상을 지원하는 JVM이 필요합니다. */
+		targetCompatibility = '11'
+	}
+
+	configurations {
+		// 컴파일할 때만 사용되는 의존성을 지정하는 구성을 의미합니다.
+		compileOnly {
+			// extendsFrom은 한 구성이 다른 구성에서 종속성을 상속하도록 허용하는 데 사용됩니다.
+			// extendsFrom annotationProcessor는 annotationProcessor에 선언된 종속성을 다른 구성에서 사용할 수 있도록 만드는 데 사용됩니다.
+			extendsFrom annotationProcessor
+
+			/* annotationProcessor 확장의 목적:
+			annotationProcessor 종속성(예: Lombok)을 다른 구성에 추가하면 annotationProcessor를 직접 포함하지 않는 구성의 경우에도
+			어노테이션이 컴파일 타임에 발생하도록 보장할 수 있습니다. 이는 Lombok과 같은 annotationProcessor 종속성을
+			테스트 또는 컴파일 전용 구성과 같은 다양한 구성에서 일관되게 사용하려는 경우에 특히 유용합니다. */
+		}
+	}
+
+	dependencies {
+		// Starters
+		// Spring Boot의 기본 설정을 포함하는 스타터. 로깅, 자동 설정, 스프링 코어 등을 포함하여 Spring Boot 애플리케이션의 기본 구조를 제공합니다.
+		implementation 'org.springframework.boot:spring-boot-starter'
+		// Spring MVC와 내장 톰캣 서버를 포함하는 웹 애플리케이션 스타터. 웹 애플리케이션을 만들기 위한 기본 라이브러리를 제공합니다.
+		implementation 'org.springframework.boot:spring-boot-starter-web'
+		// Spring의 Bean Validation을 지원하는 스타터. 유효성 검사를 위해 필요한 라이브러리를 포함하여 @Valid와 같은 어노테이션을 사용할 수 있게 합니다.
+		implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+		// h2
+		implementation group: 'com.h2database', name: 'h2', version: '1.4.200'
+
+		// Jwt
+		implementation group: 'org.jsoup', name: 'jsoup', version: '1.7.2'
+		implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+		implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.3'
+
+		// Lombok
+		// Lombok 라이브러리를 컴파일 시에만 사용하며, 실행파일에는 포함되지 않는다.
+		compileOnly 'org.projectlombok:lombok'
+		// Lombok의 어노테이션을 컴파일 시에 처리하며, annotationProcessor를 지정함으로써 Lombok 애너테이션이 컴파일 타임에 작동하도록 합니다.
+		annotationProcessor 'org.projectlombok:lombok'
+
+		// Test
+		// JUnit, Mockito 등 스프링 테스트에 필요한 라이브러리를 포함한 스타터. 스프링 애플리케이션의 테스트를 위한 다양한 라이브러리를 제공합니다.
+		testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	}
+
+	tasks.named('test') {
+		useJUnitPlatform()
+	}
+}
