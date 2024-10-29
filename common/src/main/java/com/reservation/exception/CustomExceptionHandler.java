@@ -2,10 +2,12 @@ package com.reservation.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@ControllerAdvice
+import java.util.Objects;
+
+@RestControllerAdvice
 public class CustomExceptionHandler {
     // HTTP Request -> filter(JWT 등) -> DispatcherServlet -> Controller ->
     // Service(예외 발생) -> @ExceptionHandle -> HTTP Response
@@ -17,6 +19,9 @@ public class CustomExceptionHandler {
             AbstractException e) {
 
         ErrorResponse errorResponse = ErrorResponse.of(e);
-        return new ResponseEntity<>(errorResponse, HttpStatus.resolve(e.getStatusCode()));
+        return new ResponseEntity<>(
+                errorResponse,
+                Objects.requireNonNull(HttpStatus.resolve(e.getStatusCode()))
+        );
     }
 }
