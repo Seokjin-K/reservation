@@ -2,6 +2,7 @@ package com.reservation.service;
 
 import com.reservation.auth.signup.SignUpRequest;
 import com.reservation.auth.signup.SignUpResponse;
+import com.reservation.exception.extend.AlreadyExistAccountException;
 import com.reservation.repository.user.UserRepository;
 import com.reservation.entity.user.UserEntity;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,13 @@ public class SignUpService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     * 회원가입 메서드
+     * 1. 계정 중복 체크
+     * 2. userEntity 저장
+     * @param request
+     * @return
+     */
     public SignUpResponse register(SignUpRequest request) {
         String account = request.getAccount();
 
@@ -26,9 +34,10 @@ public class SignUpService {
     }
 
     private void checkDuplicateAccount(String account) {
+        this.userRepository.existsByAccount(account);
+
         if (this.userRepository.existsByAccount(account)) {
-            throw new RuntimeException();
-            // TODO: Change RuntimeException to CustomException(ErrorCode.DUPLICATE_ACCOUNT)
+            throw new AlreadyExistAccountException();
         }
     }
 
