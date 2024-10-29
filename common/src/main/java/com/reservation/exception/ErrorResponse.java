@@ -2,8 +2,6 @@ package com.reservation.exception;
 
 import lombok.Builder;
 
-import javax.servlet.http.HttpServletRequest;
-
 @Builder
 public class ErrorResponse {
 
