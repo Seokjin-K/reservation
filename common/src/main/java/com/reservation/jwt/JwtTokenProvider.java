@@ -1,5 +1,7 @@
 package com.reservation.jwt;
 
+import com.reservation.entity.user.UserRole;
+import com.reservation.service.CustomUserDetailService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -11,10 +13,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import com.reservation.service.CustomUserDetailService;
 
 import java.util.Date;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -33,7 +33,7 @@ public class JwtTokenProvider {
      * @param roles
      * @return
      */
-    public String generateToken(String username, List<String> roles) {
+    public String generateToken(String username, UserRole roles) {
 
         Claims claims = Jwts.claims().setSubject(username);
         claims.put(KEY_ROLES, roles);
