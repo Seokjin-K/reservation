@@ -1,4 +1,4 @@
-package com.reservation;
+package com.reservation.auth.signup;
 
 import com.reservation.entity.user.UserRole;
 import lombok.Getter;

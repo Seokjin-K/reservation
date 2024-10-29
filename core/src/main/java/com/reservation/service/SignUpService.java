@@ -1,27 +1,25 @@
 package com.reservation.service;
 
-import com.reservation.SignUpRequest;
-import com.reservation.SignUpResponse;
+import com.reservation.auth.signup.SignUpRequest;
+import com.reservation.auth.signup.SignUpResponse;
 import com.reservation.repository.user.UserRepository;
 import com.reservation.entity.user.UserEntity;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class SignUpService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public SignUpResponse register(SignUpRequest signUpRequest) {
-        String account = signUpRequest.getAccount();
+    public SignUpResponse register(SignUpRequest request) {
+        String account = request.getAccount();
 
         checkDuplicateAccount(account); // 계정 중복 체크
-        UserEntity userEntity = buildUserEntity(signUpRequest);
+        UserEntity userEntity = buildUserEntity(request);
 
         this.userRepository.save(userEntity);
         return SignUpResponse.from(userEntity);
