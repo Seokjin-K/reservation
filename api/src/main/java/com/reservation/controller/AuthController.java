@@ -1,10 +1,11 @@
 package com.reservation.controller;
 
-import com.reservation.SignUpRequest;
-import com.reservation.SignUpResponse;
-import com.reservation.service.UserService;
+import com.reservation.auth.signin.SignInRequest;
+import com.reservation.auth.signin.SignInResponse;
+import com.reservation.auth.signup.SignUpRequest;
+import com.reservation.auth.signup.SignUpResponse;
+import com.reservation.service.SignUpService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,12 +19,19 @@ import javax.validation.Valid;
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 
-    private final UserService userService;
+    private final SignUpService userService;
 
     @PostMapping("/signup")
     public ResponseEntity<SignUpResponse> signUp(
             @Valid @RequestBody SignUpRequest request) {
 
         return ResponseEntity.ok(userService.register(request));
+    }
+
+    @PostMapping("/signin")
+    public ResponseEntity<SignInResponse> signIn(
+            @Valid @RequestBody SignInRequest request){
+
+        return ResponseEntity.ok();
     }
 }
