@@ -11,7 +11,10 @@
         <module name="reservation.api.main" />
         <module name="reservation.common.main" />
         <module name="reservation.core.main" />
+        <module name="reservation.auth.main" />
         <module name="reservation.infrastructure.main" />
+        <module name="reservation.domain.main" />
+        <module name="reservation.dto.main" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="11" />

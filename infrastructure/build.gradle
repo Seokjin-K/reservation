@@ -2,19 +2,4 @@ bootJar { enabled = false }
 jar { enabled = true }
 
 dependencies {
-    implementation project(':core')
-    implementation project(':common')
-
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-
-    /*// JWT
-    *//* JJWT (Java JSON Web Token) 라이브러리의 API 부분입니다. 이 라이브러리는 JWT 토큰을 생성하고 검증하는 데 사용됩니다.
-    JWT는 주로 인증 및 권한 부여를 위한 토큰 방식으로 사용되며, JSON 기반의 경량 토큰입니다. *//*
-    implementation "io.jsonwebtoken:jjwt-api:${jwtVersion}"
-    *//* jjwt-api에서 정의된 기능의 구현체입니다. 런타임에만 필요하므로 runtimeOnly로 지정되어 있습니다.
-    이 설정은 컴파일 시에는 필요하지 않지만, 애플리케이션이 실제로 실행될 때 JWT 토큰 생성을 처리합니다. *//*
-    runtimeOnly "io.jsonwebtoken:jjwt-impl:${jwtVersion}"
-    *//* JWT를 JSON 형식으로 직렬화/역직렬화할 때 사용하는 Jackson 라이브러리 지원을 위한 의존성입니다.
-    JWT의 payload를 처리하기 위해 JSON 직렬화 라이브러리를 필요로 하기 때문에 이 의존성이 추가된 것입니다. *//*
-    runtimeOnly "io.jsonwebtoken:jjwt-jackson:${jwtVersion}"*/
 }

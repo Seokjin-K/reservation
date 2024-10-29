@@ -1,49 +1,46 @@
 package com.reservation.service;
 
-import com.reservation.dto.auth.UserRequest;
-import com.reservation.mapper.UserMapper;
-import com.reservation.model.UserEntity;
-import com.reservation.repository.UserRepository;
+import com.reservation.SignUpRequest;
+import com.reservation.SignUpResponse;
+import com.reservation.repository.user.UserRepository;
+import com.reservation.entity.user.UserEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserService implements UserDetailsService {
+public class UserService {
 
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
-    private final PasswordEncoder passwordEncoder; // AppConfig 에서 @Bean 주입받음
+    private final PasswordEncoder passwordEncoder;
 
-    @Transactional
-    public UserEntity register(UserRequest user) {
-        boolean exists =
-                this.userRepository.existsByAccount(user.getAccount());
+    public SignUpResponse register(SignUpRequest signUpRequest) {
+        String account = signUpRequest.getAccount();
 
-        if (exists) {
-            throw new RuntimeException("이미 사용중인 아이디입니다.");
-            // TODO: Change to Custom Exception
-        }
-        user.setPassword(this.passwordEncoder.encode(user.getPassword()));
+        checkDuplicateAccount(account); // 계정 중복 체크
+        UserEntity userEntity = buildUserEntity(signUpRequest);
 
-        return this.userRepository.save(userMapper.toEntity(user));
+        this.userRepository.save(userEntity);
+        return SignUpResponse.from(userEntity);
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String account)
-            throws UsernameNotFoundException {
+    private void checkDuplicateAccount(String account) {
+        if (this.userRepository.existsByAccount(account)) {
+            throw new RuntimeException();
+            // TODO: Change RuntimeException to CustomException(ErrorCode.DUPLICATE_ACCOUNT)
+        }
+    }
 
-        return this.userRepository.findByAccount(account)
-                .orElseThrow(() -> new UsernameNotFoundException(
-                        "couldn't find account -> " + account
-                ));
+    private UserEntity buildUserEntity(SignUpRequest signUpRequest) {
+        return UserEntity.builder()
+                .account(signUpRequest.getAccount())
+                .password(this.passwordEncoder
+                        .encode(signUpRequest.getPassword()))
+                .name(signUpRequest.getName())
+                .userRole(signUpRequest.getUserRole())
+                .build();
     }
 }

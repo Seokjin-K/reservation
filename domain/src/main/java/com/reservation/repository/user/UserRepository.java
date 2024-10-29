@@ -1,6 +1,6 @@
-package com.reservation.repository;
+package com.reservation.repository.user;
 
-import com.reservation.model.UserEntity;
+import com.reservation.entity.user.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

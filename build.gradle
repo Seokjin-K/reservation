@@ -4,6 +4,8 @@ buildscript {
 		springBootVersion = '2.7.14'
 		dependencyManagementVersion = '1.0.15.RELEASE'
 		jwtVersion = '0.9.1'
+		swaggerVersion = '3.0.0'
+		awsVersion = '2.2.6.RELEASE'
 	}
 }
 

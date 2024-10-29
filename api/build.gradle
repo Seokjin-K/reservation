@@ -1,17 +1,9 @@
-/* bootJar는 Spring Boot에서 사용되는 JAR 파일을 생성하는 작업입니다.
-이 설정은 Spring Boot의 실행 가능한 JAR 파일 생성을 비활성화합니다.
-Spring Boot에서는 bootJar를 통해 애플리케이션을 독립적으로 실행할 수 있는 JAR 파일을 생성하지만,
-이 설정은 이를 비활성화하고 일반적인 JAR 파일로만 만들도록 합니다. */
 bootJar { enabled = false }
-
-/* jar 작업은 표준 Java JAR 파일을 생성하는 작업입니다.
-이 설정은 jar를 활성화하여 기본 Java 애플리케이션 JAR 파일을 생성하도록 합니다.
-일반적으로 이와 같은 설정은 라이브러리 JAR 파일을 생성하거나 다른 프로젝트에 의존성으로 사용될 JAR 파일을 생성할 때 사용됩니다. */
 jar { enabled = true }
 
 dependencies {
     implementation project(':core')
-    implementation project(':common')
+    implementation project(':dto')
 
     implementation 'org.springframework.boot:spring-boot-starter-security'
 

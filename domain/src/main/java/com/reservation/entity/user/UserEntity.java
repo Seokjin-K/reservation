@@ -1,7 +1,6 @@
-package com.reservation.model;
+package com.reservation.entity.user;
 
-import com.reservation.model.common.BaseEntity;
-import com.reservation.constant.UserRole;
+import com.reservation.entity.base.BaseEntity;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,7 +9,6 @@ import javax.persistence.*;
 import java.util.Collection;
 import java.util.List;
 
-@ToString
 @Getter
 @Builder
 @AllArgsConstructor

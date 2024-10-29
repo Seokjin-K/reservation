@@ -4,4 +4,7 @@ include 'core'
 include 'api'
 include 'infrastructure'
 include 'common'
+include 'auth'
+include 'domain'
+include 'dto'
 

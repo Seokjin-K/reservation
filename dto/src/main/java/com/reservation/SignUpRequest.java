@@ -1,17 +1,13 @@
-package com.reservation.dto.auth;
+package com.reservation;
 
-import com.reservation.constant.UserRole;
-import lombok.Builder;
+import com.reservation.entity.user.UserRole;
 import lombok.Getter;
-import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Getter
-@Setter
-@Builder
-public class UserRequest {
+public class SignUpRequest {
 
     // 충족 못하면 MethodArgumentNotValidException 발생
     @NotBlank(message = "계정은 필수 입력값입니다.") // 애플리케이션 수준 검사
