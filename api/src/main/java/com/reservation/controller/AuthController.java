@@ -3,8 +3,8 @@ package com.reservation.controller;
 import com.reservation.auth.signin.SignInRequest;
 import com.reservation.auth.signup.SignUpRequest;
 import com.reservation.auth.signup.SignUpResponse;
-import com.reservation.service.SignInService;
-import com.reservation.service.SignUpService;
+import com.reservation.service.auth.SignInService;
+import com.reservation.service.auth.SignUpService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +21,8 @@ public class AuthController {
 
     private final SignUpService signUpService;
     private final SignInService signInService;
+
+    // HTTP 요청 -> Filter -> ServletDispatcher -> 인터셉터 -> AOP -> Controller
 
     /**
      * 회원가입
