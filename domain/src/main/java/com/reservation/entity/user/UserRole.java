@@ -6,5 +6,9 @@ package com.reservation.entity.user;
  */
 public enum UserRole {
     CUSTOMER,
-    PARTNER
+    PARTNER;
+
+    public String getAuthority() {
+        return "ROLE_" + name();
+    }
 }
