@@ -1,4 +1,4 @@
-package com.reservation.service;
+package com.reservation.service.auth;
 
 import com.reservation.auth.signup.SignUpRequest;
 import com.reservation.auth.signup.SignUpResponse;
@@ -6,9 +6,11 @@ import com.reservation.exception.extend.AlreadyExistAccountException;
 import com.reservation.repository.user.UserRepository;
 import com.reservation.entity.user.UserEntity;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SignUpService {
@@ -20,6 +22,7 @@ public class SignUpService {
      * 회원가입 메서드
      * 1. 계정 중복 체크
      * 2. userEntity 저장
+     *
      * @param request
      * @return
      */
@@ -30,6 +33,9 @@ public class SignUpService {
         UserEntity userEntity = buildUserEntity(request);
 
         this.userRepository.save(userEntity);
+        log.info("\u001B[32muser register -> {}", userEntity.getAccount() +
+                "\u001B[0m");
+
         return SignUpResponse.from(userEntity);
     }
 

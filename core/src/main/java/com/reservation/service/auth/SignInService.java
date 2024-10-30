@@ -1,4 +1,4 @@
-package com.reservation.service;
+package com.reservation.service.auth;
 
 import com.reservation.auth.signin.SignInRequest;
 import com.reservation.entity.user.UserEntity;
@@ -42,7 +42,9 @@ public class SignInService {
         String token = this.jwtTokenProvider.generateToken(
                 userEntity.getAccount(), userEntity.getUserRole());
 
-        log.info("\u001B[32muser login -> {}", userEntity.getAccount());
+        log.info("\u001B[32muser login -> {}", userEntity.getAccount() +
+                "\u001B[0m");
+
         return token;
     }
 }
