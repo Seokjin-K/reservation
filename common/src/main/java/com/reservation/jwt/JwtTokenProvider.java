@@ -21,7 +21,7 @@ import java.util.Date;
 public class JwtTokenProvider {
 
     private static final long TOKEN_EXPIRE_TIME = 1000 * 60 * 60; // 1 hour
-    private static final String KEY_ROLES = "roles";
+    private static final String KEY_ROLES = "userRole";
     private final CustomUserDetailService customUserDetailService;
 
     @Value("{spring.jwt.secret}")
@@ -30,13 +30,13 @@ public class JwtTokenProvider {
     /**
      * 토큰 생성(발급)
      * @param username
-     * @param roles
+     * @param userRole
      * @return
      */
-    public String generateToken(String username, UserRole roles) {
+    public String generateToken(String username, UserRole userRole) {
 
         Claims claims = Jwts.claims().setSubject(username);
-        claims.put(KEY_ROLES, roles);
+        claims.put(KEY_ROLES, userRole);
 
         Date now = new Date();
         Date expiredDate = new Date(now.getTime() + TOKEN_EXPIRE_TIME); // 만료 시간
@@ -49,6 +49,11 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+    /**
+     * JWT 토큰으로 부터 인증 정보를 가져오는 메서드
+     * @param jwt
+     * @return
+     */
     public Authentication getAuthentication(String jwt) {
         UserDetails userDetails = this.customUserDetailService
                 .loadUserByUsername(this.getUsername(jwt));

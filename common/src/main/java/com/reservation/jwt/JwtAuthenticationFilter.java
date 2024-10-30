@@ -20,17 +20,14 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    // 토큰은 HTTP 프로토콜의 헤더에 포함된다.
-    // 어떤 키를 기준으로 토큰을 주고받을 지 키값을 정의
     public static final String TOKEN_HEADER = "Authorization";
     public static final String TOKEN_PREFIX = "Bearer "; // 인증 타입
-    // 요청이 올 때 HTTP 헤더의 TOKEN_HEADER(키)를 기준으로 value 는 'Bearer '로 하면,
-    // 우리가 발급해준 토큰이 'Bearer xxxx.yyyy.zzz' 형태로 요청이 오게 된다.
 
     private final JwtTokenProvider tokenProvider;
 
     /**
      * JWT 토큰으로 인증 시도시에 호출
+     *
      * @param request
      * @param response
      * @param filterChain
@@ -47,12 +44,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(token) &&
                 this.tokenProvider.validateToken(token)) {
 
+            // JWT 토큰에서 사용자 정보 추출
             Authentication auth = this.tokenProvider.getAuthentication(token);
+            // SecurityContext 에 저장
             SecurityContextHolder.getContext().setAuthentication(auth);
 
             log.info(String.format(
-                    "[%s] -> %s", this.tokenProvider.getUsername(token),
-                    request.getRequestURI()));
+                    "\u001B[32[%s] -> %s", this.tokenProvider.getUsername(token),
+                    request.getRequestURI() + "\u001B[0m"));
         }
         filterChain.doFilter(request, response);
     }
@@ -61,7 +60,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = request.getHeader(TOKEN_HEADER);
 
         if (!ObjectUtils.isEmpty(token) && token.startsWith(TOKEN_PREFIX)) {
-            // 정상적인 토큰인지는 아직 모르지만, 토큰의 형태를 띄고 있다.
             return token.substring(TOKEN_PREFIX.length());
         }
         return null;

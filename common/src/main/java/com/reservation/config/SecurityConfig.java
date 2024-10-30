@@ -23,6 +23,7 @@ public class SecurityConfig {
 
     /**
      * api 관련 권한을 조정
+     *
      * @param http
      * @throws Exception
      */
@@ -38,11 +39,10 @@ public class SecurityConfig {
                 .authorizeRequests() // URL 별 권한 설정 시작
                 // 회원가입, 로그인은 모두 허용
                 .antMatchers(
-                        "/api/v1/auth/signup",
-                        "/api/v1/auth/signin").permitAll()
+                        "/**/signup", "/**/signin").permitAll()
                 .and()
                 // JWT 필터를 UsernamePassword 필터 전에 추가
-                .addFilterBefore(jwtAuthenticationFilter,
+                .addFilterBefore(this.jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
