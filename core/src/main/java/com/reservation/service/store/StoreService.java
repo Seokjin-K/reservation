@@ -17,9 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class StoreService {
 
-    //private final Double DEFAULT_RATING = 0.0;
     private final StoreRepository storeRepository;
-    private final AutoCompleteService autoCompleteService;
+    private final AutocompleteService autoCompleteService;
 
     /**
      * 매장 등록
@@ -42,17 +41,16 @@ public class StoreService {
         StoreEntity storeEntity = buildStoreEntity(userId, request);
 
         this.storeRepository.save(storeEntity);
+        this.autoCompleteService.addAutoCompleteKeyword(storeEntity.getName());
 
-        // 자동완성을 위한 매장 정보 추가
-        //this.autoCompleteService.autocomplete();
-
-        log.info("\u001B[32mregister store -> {}", request.getName() + "\u001B[0m");
-
+        log.info("\u001B[32mregister store -> {}", request.getName()
+                + "\u001B[0m");
         return StoreResponse.from(storeEntity);
     }
 
     /**
      * 매장의 ID로 매장 검색
+     *
      * @param storeId
      * @return StoreResponse
      */
@@ -61,13 +59,15 @@ public class StoreService {
         StoreEntity storeEntity = storeRepository.findById(storeId)
                 .orElseThrow(NonExistStoreException::new);
 
-        log.info("\u001B[32mget store  -> {}", storeEntity.getName() + "\u001B[0m");
+        log.info("\u001B[32mget store  -> {}", storeEntity.getName()
+                + "\u001B[0m");
 
         return StoreResponse.from(storeEntity);
     }
 
     /**
      * 매장 삭제
+     *
      * @param userId
      * @param storeId
      */
@@ -76,13 +76,16 @@ public class StoreService {
                 .orElseThrow(NonExistStoreException::new);
 
         storeRepository.delete(storeEntity);
+        this.autoCompleteService.deleteAutocompleteKeyword(storeEntity.getName());
 
-        log.info("\u001B[32mdelete store  -> {}", storeEntity.getName() + "\u001B[0m");
+        log.info("\u001B[32mdelete store  -> {}", storeEntity.getName()
+                + "\u001B[0m");
         return storeEntity.getName();
     }
 
     /**
      * reqeust 의 정보로 매장 정보 업데이트
+     *
      * @param userId
      * @param storeId
      * @param request
@@ -95,15 +98,20 @@ public class StoreService {
                 storeRepository.findByIdAndUserId(storeId, userId)
                         .orElseThrow(NonExistStoreException::new);
 
+        this.autoCompleteService.updateAutocompleteKeyword(
+                storeEntity.getName(), request.getName());
+
         storeEntity.updateStore(request.getName(), request.getAddress(),
                 request.getDescription());
 
-        log.info("\u001B[32mupdate store  -> {}", storeEntity.getName() + "\u001B[0m");
+        log.info("\u001B[32mupdate store  -> {}", storeEntity.getName()
+                + "\u001B[0m");
         return StoreResponse.from(storeEntity);
     }
 
     /**
      * Builder 패턴을 이용하여 StoreEntity 생성
+     *
      * @param userId
      * @param request
      * @return StoreEntity
