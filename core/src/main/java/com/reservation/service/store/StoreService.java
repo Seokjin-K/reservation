@@ -66,24 +66,6 @@ public class StoreService {
     }
 
     /**
-     * 매장 삭제
-     *
-     * @param userId
-     * @param storeId
-     */
-    public String deleteStore(Long userId, Long storeId) {
-        StoreEntity storeEntity = storeRepository.findByIdAndUserId(storeId, userId)
-                .orElseThrow(NonExistStoreException::new);
-
-        storeRepository.delete(storeEntity);
-        this.autoCompleteService.deleteAutocompleteKeyword(storeEntity.getName());
-
-        log.info("\u001B[32mdelete store  -> {}", storeEntity.getName()
-                + "\u001B[0m");
-        return storeEntity.getName();
-    }
-
-    /**
      * reqeust 의 정보로 매장 정보 업데이트
      *
      * @param userId
@@ -107,6 +89,24 @@ public class StoreService {
         log.info("\u001B[32mupdate store  -> {}", storeEntity.getName()
                 + "\u001B[0m");
         return StoreResponse.from(storeEntity);
+    }
+
+    /**
+     * 매장 삭제
+     *
+     * @param userId
+     * @param storeId
+     */
+    public String deleteStore(Long userId, Long storeId) {
+        StoreEntity storeEntity = storeRepository.findByIdAndUserId(storeId, userId)
+                .orElseThrow(NonExistStoreException::new);
+
+        storeRepository.delete(storeEntity);
+        this.autoCompleteService.deleteAutocompleteKeyword(storeEntity.getName());
+
+        log.info("\u001B[32mdelete store  -> {}", storeEntity.getName()
+                + "\u001B[0m");
+        return storeEntity.getName();
     }
 
     /**
