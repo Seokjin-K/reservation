@@ -11,6 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Service
 @Transactional
@@ -49,20 +52,22 @@ public class StoreService {
     }
 
     /**
-     * 매장의 ID로 매장 검색
+     * 매장의 이름으로 매장 검색
+     * 일부분 일치하는 매장의 정보 모두 반환
      *
-     * @param storeId
+     * @param storeName
      * @return StoreResponse
      */
     @Transactional(readOnly = true)
-    public StoreResponse getStore(Long storeId) {
-        StoreEntity storeEntity = storeRepository.findById(storeId)
-                .orElseThrow(NonExistStoreException::new);
+    public List<StoreResponse> getStore(String storeName) {
+        List<StoreEntity> storeEntityList =
+                storeRepository.findByNameContaining(storeName);
 
-        log.info("\u001B[32mget store  -> {}", storeEntity.getName()
-                + "\u001B[0m");
+        log.info("\u001B[32mget store -> {}", storeName + "\u001B[0m");
 
-        return StoreResponse.from(storeEntity);
+        return storeEntityList.stream()
+                .map(StoreResponse::from)
+                .collect(Collectors.toList());
     }
 
     /**

@@ -10,6 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,8 +23,7 @@ public class StoreController {
      * 인증 과정
      * HTTP 요청 ->
      * JwtAuthenticationFilter
-     * - JWT 토큰 검증, CustomUserDetails 생성, SecurityContext 에 저장
-     * ->
+     * - JWT 토큰 검증, CustomUserDetails 생성, SecurityContext 에 저장 ->
      * Controller
      * - @AuthenticationPrincipal 로 주입
      */
@@ -49,13 +49,13 @@ public class StoreController {
 
     /**
      * 매장 상세정보 가져오기
-     * @param storeId
+     * @param storeName
      * @return
      */
-    // TODO: 매장 이름으로 검색
-    @GetMapping("/{storeId}")
-    public ResponseEntity<StoreResponse> getStore(@PathVariable Long storeId) {
-        return ResponseEntity.ok(this.storeService.getStore(storeId));
+    @GetMapping
+    public ResponseEntity<List<StoreResponse>> getStore(
+            @RequestParam String storeName) {
+        return ResponseEntity.ok(this.storeService.getStore(storeName));
     }
 
     /**
