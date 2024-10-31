@@ -17,8 +17,13 @@ public class AutocompleteController {
 
     private final AutocompleteService autocompleteService;
 
+    /**
+     * 자동완성
+     * @param keyword
+     * @return Trie 에 keyword 로 시작하는 매장 이름을 반환
+     */
     @GetMapping
-    public ResponseEntity<?> autocompleteStore(
+    public ResponseEntity<List<String>> autocompleteStore(
             @RequestParam String keyword) {
         List<String> storeNamesByKeyword =
                 this.autocompleteService.getStoreNamesByKeyword(keyword);

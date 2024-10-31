@@ -22,7 +22,6 @@ public class AutocompleteService {
 
     public List<String> getStoreNamesByKeyword(String keyword) {
         log.info("\u001B[32mautocomplete -> {}", keyword + "\u001B[0m");
-
         return new ArrayList<>(this.trie.prefixMap(keyword).keySet());
     }
 

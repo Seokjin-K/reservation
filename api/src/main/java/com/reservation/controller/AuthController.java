@@ -26,21 +26,17 @@ public class AuthController {
 
     /**
      * 회원가입
-     * /api/v1/auth/signup
-     * @param request(아이디, 비밀번호, 이름, 역할)
-     * @return SignUpResponse
+     * @param request
+     * @return 회원 정보를 반환
      */
     @PostMapping("/signup")
     public ResponseEntity<SignUpResponse> signUp(
             @Valid @RequestBody SignUpRequest request) {
-
         return ResponseEntity.ok(this.signUpService.register(request));
     }
 
     /**
      * 로그인
-     * /api/v1/auth/signin
-     * @param request(아이디, 비밀번호)
      * @return 해당 계정의 토큰을 반환
      */
     @PostMapping("/signin")
