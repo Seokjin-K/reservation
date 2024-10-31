@@ -52,6 +52,7 @@ public class StoreController {
      * @param storeId
      * @return
      */
+    // TODO: 매장 이름으로 검색
     @GetMapping("/{storeId}")
     public ResponseEntity<StoreResponse> getStore(@PathVariable Long storeId) {
         return ResponseEntity.ok(this.storeService.getStore(storeId));
