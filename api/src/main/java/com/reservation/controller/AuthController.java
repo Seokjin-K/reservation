@@ -3,8 +3,7 @@ package com.reservation.controller;
 import com.reservation.auth.signin.SignInRequest;
 import com.reservation.auth.signup.SignUpRequest;
 import com.reservation.auth.signup.SignUpResponse;
-import com.reservation.service.auth.SignInService;
-import com.reservation.service.auth.SignUpService;
+import com.reservation.service.auth.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,8 +18,7 @@ import javax.validation.Valid;
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 
-    private final SignUpService signUpService;
-    private final SignInService signInService;
+    private final AuthService authService;
 
     // HTTP 요청 -> Filter -> ServletDispatcher -> 인터셉터 -> AOP -> Controller
 
@@ -32,7 +30,7 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<SignUpResponse> signUp(
             @Valid @RequestBody SignUpRequest request) {
-        return ResponseEntity.ok(this.signUpService.register(request));
+        return ResponseEntity.ok(this.authService.register(request));
     }
 
     /**
@@ -42,7 +40,6 @@ public class AuthController {
     @PostMapping("/signin")
     public ResponseEntity<String> signIn(
             @Valid @RequestBody SignInRequest request){
-
-        return ResponseEntity.ok(this.signInService.login(request));
+        return ResponseEntity.ok(this.authService.login(request));
     }
 }

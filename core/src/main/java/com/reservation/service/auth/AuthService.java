@@ -1,7 +1,10 @@
 package com.reservation.service.auth;
 
 import com.reservation.auth.signin.SignInRequest;
+import com.reservation.auth.signup.SignUpRequest;
+import com.reservation.auth.signup.SignUpResponse;
 import com.reservation.entity.user.UserEntity;
+import com.reservation.exception.extend.AlreadyExistAccountException;
 import com.reservation.exception.extend.MismatchPasswordException;
 import com.reservation.exception.extend.NonExistAccountException;
 import com.reservation.jwt.JwtTokenProvider;
@@ -14,7 +17,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class SignInService {
+public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -44,7 +47,45 @@ public class SignInService {
 
         log.info("\u001B[32muser login -> {}", userEntity.getAccount() +
                 "\u001B[0m");
-
         return token;
+    }
+
+    /**
+     * 회원가입 메서드
+     * 1. 계정 중복 체크
+     * 2. userEntity 저장
+     *
+     * @param request
+     * @return
+     */
+    public SignUpResponse register(SignUpRequest request) {
+        String account = request.getAccount();
+
+        checkDuplicateAccount(account); // 계정 중복 체크
+        UserEntity userEntity = buildUserEntity(request);
+
+        this.userRepository.save(userEntity);
+        log.info("\u001B[32muser register -> {}", userEntity.getAccount() +
+                "\u001B[0m");
+
+        return SignUpResponse.from(userEntity);
+    }
+
+    private void checkDuplicateAccount(String account) {
+        this.userRepository.existsByAccount(account);
+
+        if (this.userRepository.existsByAccount(account)) {
+            throw new AlreadyExistAccountException();
+        }
+    }
+
+    private UserEntity buildUserEntity(SignUpRequest signUpRequest) {
+        return UserEntity.builder()
+                .account(signUpRequest.getAccount())
+                .password(this.passwordEncoder
+                        .encode(signUpRequest.getPassword()))
+                .name(signUpRequest.getName())
+                .userRole(signUpRequest.getUserRole())
+                .build();
     }
 }
