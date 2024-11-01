@@ -21,7 +21,6 @@ public class AuthController {
     private final AuthService authService;
 
     // HTTP 요청 -> Filter -> ServletDispatcher -> 인터셉터 -> AOP -> Controller
-
     /**
      * 회원가입
      * @param request

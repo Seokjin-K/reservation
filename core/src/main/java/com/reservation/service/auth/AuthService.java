@@ -61,13 +61,12 @@ public class AuthService {
     public SignUpResponse register(SignUpRequest request) {
         String account = request.getAccount();
 
-        checkDuplicateAccount(account); // 계정 중복 체크
+        checkDuplicateAccount(account);
         UserEntity userEntity = buildUserEntity(request);
-
         this.userRepository.save(userEntity);
+
         log.info("\u001B[32muser register -> {}", userEntity.getAccount() +
                 "\u001B[0m");
-
         return SignUpResponse.from(userEntity);
     }
 
