@@ -3,7 +3,9 @@ package com.reservation.auth.signin;
 import com.reservation.entity.user.UserEntity;
 import com.reservation.entity.user.UserRole;
 import lombok.Builder;
+import lombok.Getter;
 
+@Getter
 @Builder
 public class SignInResponse {
     private Long id;
