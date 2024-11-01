@@ -8,7 +8,6 @@ import lombok.Getter;
 @Builder
 public class StoreResponse {
     private Long id;
-    private Long userId;
     private String name;
     private String address;
     private String description;
@@ -17,7 +16,6 @@ public class StoreResponse {
     public static StoreResponse from(StoreEntity storeEntity) {
         return StoreResponse.builder()
                 .id(storeEntity.getId())
-                .userId(storeEntity.getUserId())
                 .name(storeEntity.getName())
                 .address(storeEntity.getAddress())
                 .description(storeEntity.getDescription())

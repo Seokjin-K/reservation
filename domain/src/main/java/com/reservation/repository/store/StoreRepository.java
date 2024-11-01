@@ -12,7 +12,7 @@ public interface StoreRepository extends JpaRepository<StoreEntity, Long> {
 
     boolean existsByNameAndAddress(String name, String address);
 
-    Optional<StoreEntity> findByIdAndUserId(Long id, Long userId);
+    Optional<StoreEntity> findById(Long id);
 
     List<StoreEntity> findByNameContaining(String name);
 }
