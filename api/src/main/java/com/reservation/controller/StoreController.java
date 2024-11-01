@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/v1/store")
+@RequestMapping("/api/v1/store")
 public class StoreController {
 
     private final StoreService storeService;
@@ -38,12 +38,12 @@ public class StoreController {
      */
     @PreAuthorize("hasRole('PARTNER')")
     @PostMapping
-    public ResponseEntity<StoreResponse> registerStore(
+    public ResponseEntity<StoreResponse> createStore(
             @AuthenticationPrincipal(expression = "id") Long userId,
             @Valid @RequestBody StoreRequest request
     ) {
         return ResponseEntity.ok(
-                this.storeService.registerStore(userId, request)
+                this.storeService.createStore(userId, request)
         );
     }
 
@@ -61,7 +61,6 @@ public class StoreController {
     /**
      * 매장 업데이트
      * 현재 로그인된 아이디의 storeId 매장 정보 업데이트
-     * @param userId
      * @param storeId
      * @param request
      * @return ResponseEntity<StoreResponse>
