@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/dto.iml" filepath="$PROJECT_DIR$/dto.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/api/reservation.api.main.iml" filepath="$PROJECT_DIR$/.idea/modules/api/reservation.api.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/auth/reservation.auth.main.iml" filepath="$PROJECT_DIR$/.idea/modules/auth/reservation.auth.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/common/reservation.common.main.iml" filepath="$PROJECT_DIR$/.idea/modules/common/reservation.common.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/reservation.core.main.iml" filepath="$PROJECT_DIR$/.idea/modules/core/reservation.core.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/domain/reservation.domain.main.iml" filepath="$PROJECT_DIR$/.idea/modules/domain/reservation.domain.main.iml" />
