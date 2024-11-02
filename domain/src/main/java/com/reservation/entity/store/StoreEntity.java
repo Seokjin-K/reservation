@@ -12,6 +12,9 @@ import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * 매장 정보를 관리하는 엔티티
+ */
 @Getter
 @Builder
 @AllArgsConstructor
@@ -36,18 +39,15 @@ public class StoreEntity extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(columnDefinition = "json") // 영업시간 - JSON 형태로 저장
-    @Convert(converter = BusinessHoursConverter.class)
-    private BusinessHours businessHours;
-
     @Column(nullable = false)
-    private double rating;
+    private Double rating;
 
     @OneToMany(mappedBy = "storeEntity",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
     private List<ReservationEntity> reservationEntities;
 
+    // Put
     public void updateStore(
             UserEntity userEntity,
             String name,
@@ -58,6 +58,15 @@ public class StoreEntity extends BaseEntity {
         this.name = name;
         this.address = address;
         this.description = description;
+    }
+
+    // Patch
+    public void updateRating(Double rating) {
+        this.rating = rating;
+    }
+
+    public boolean isOwnedBy(Long userId) {
+        return this.userEntity.getId().equals(userId);
     }
 
     @Override
@@ -72,6 +81,4 @@ public class StoreEntity extends BaseEntity {
     public int hashCode() {
         return Objects.hash(this.id);
     }
-
-
 }

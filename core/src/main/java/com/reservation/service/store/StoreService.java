@@ -11,7 +11,6 @@ import com.reservation.store.StoreRequest;
 import com.reservation.store.StoreResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.h2.engine.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,9 +29,10 @@ public class StoreService {
 
     /**
      * 매장 등록
-     * 1. 매장 존재 유무 체크
-     * 2. 존재하면 StoreEntity 저장
-     * 3. 자동완성을 위한 매장 정보 추가
+     * 1. 존재하는 유저인지 검증
+     * 2. 이미 존재하는 매장이 없는지 검증
+     * 3. 모든 검증을 통과하면 매장 저장
+     * 4. 자동완성을 위한 매장 정보 추가
      *
      * @param userId
      * @param request
@@ -87,7 +87,6 @@ public class StoreService {
      *
      * @param storeId
      * @param request
-     * @return
      */
     public StoreResponse updateStore(
             Long userId, Long storeId, StoreRequest request) {
@@ -161,6 +160,7 @@ public class StoreService {
                 .name(request.getName())
                 .address(request.getAddress())
                 .description(request.getDescription())
+                .rating(0.0)
                 .build();
     }
 }
