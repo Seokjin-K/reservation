@@ -5,9 +5,13 @@ import com.reservation.review.ReviewRequest;
 import com.reservation.review.ReviewResponse;
 import com.reservation.service.review.ReviewService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 
 import javax.validation.Valid;
 
@@ -55,7 +59,7 @@ public class ReviewController {
     /**
      * 리뷰 삭제
      *
-     * @param userEntity 작성한 리뷰의 유저  id
+     * @param userEntity 리뷰 삭제를 요청한 회원
      * @param reviewId   삭제할 리뷰의 id
      * @return 삭제한 리뷰의 id
      */
@@ -66,6 +70,16 @@ public class ReviewController {
     ) {
         return ResponseEntity.ok(
                 this.reviewService.deleteReview(userEntity, reviewId)
+        );
+    }
+
+    @GetMapping("/stores/{storeId}")
+    public ResponseEntity<Page<ReviewResponse>> getStoreReviews(
+            @PathVariable Long storeId,
+            @PageableDefault(page = 0, size = 10) Pageable pageable
+    ) {
+        return ResponseEntity.ok(
+                this.reviewService.getStoreReviews(storeId, pageable)
         );
     }
 }
