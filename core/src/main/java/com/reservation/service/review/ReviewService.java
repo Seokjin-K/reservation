@@ -30,10 +30,11 @@ public class ReviewService {
 
     /**
      * 새로운 리뷰를 작성
-     * 1. 리뷰 자격 검증
-     * 2. 중복 리뷰 검증
-     * 3. 리뷰 정보 저장
-     * 4. 해당 매장의 평균 별점 업데이트
+     * 1. 리뷰 자격 확인
+     * 2. 평점이 0.5점 단위인지 확인
+     * 3. 중복 리뷰 확인
+     * 5. 리뷰 정보 저장
+     * 6. 해당 매장의 평균 별점 업데이트
      *
      * @param userEntity 리뷰 작성자의 엔티티
      * @param request    리뷰 작성 요청 정보
@@ -44,13 +45,14 @@ public class ReviewService {
         ReservationEntity reservationEntity = this.reservationRepository
                 .findById(request.getReservationId())
                 .orElseThrow(NonExistReservationException::new);
-
+        
+        // rating 단위 검증
+        isValidRatingIncrement(request.getRating());
         // 리뷰 자격 검증
         validateReviewEligibility(userEntity, reservationEntity);
         // 중복 리뷰 검증
         validateDuplicateReview(reservationEntity.getId());
 
-        // 리뷰 정보 저장
         ReviewEntity reviewEntity = this.reviewRepository.save(
                 buildReviewEntity(userEntity, reservationEntity, request)
         );
@@ -59,6 +61,33 @@ public class ReviewService {
 
         log.info("\u001B[32mcreate review  -> {}",
                 reviewEntity.getId() + "\u001B[0m");
+        return ReviewResponse.from(reviewEntity);
+    }
+
+    /**
+     * 리뷰 수정
+     * 1. 유효한 리뷰인지 확인
+     * 2. 평점이 0.5점 단위인지 확인
+     * 2. 리뷰 업데이트
+     * 3. 해당 매장의 평점 업데이트
+     * 
+     * @param userEntity 리뷰를 수정하려는 작성자의 엔티티
+     * @param reviewId 수정하려는 리뷰의 id
+     * @param request 수정하려는 정보를 담은 요청
+     */
+    public ReviewResponse updateReview(
+            UserEntity userEntity, Long reviewId, ReviewRequest request) {
+
+        // 유효한 리뷰인지 확인
+        ReviewEntity reviewEntity = validateReview(reviewId, userEntity);
+        // 평점이 0.5점 단위인지 확인
+        isValidRatingIncrement(request.getRating());
+
+        // 리뷰 정보 업데이트
+        reviewEntity.update(request.getContent(), request.getRating());
+        // 리뷰를 작성한 매장의 평균 평점 업데이트
+        updateStoreAverageRating(reviewEntity.getStoreEntity().getId());
+
         return ReviewResponse.from(reviewEntity);
     }
 
@@ -120,9 +149,9 @@ public class ReviewService {
      * 1. rating null 체크
      * 2. 빌드 패턴으로 리뷰 엔티티 생성
      *
-     * @param userEntity 리뷰를 작성한 유저의 엔티티
+     * @param userEntity        리뷰를 작성한 유저의 엔티티
      * @param reservationEntity 리류를 작성할 예약 엔티티
-     * @param request 작성한 리뷰의 정보를 담은 요청
+     * @param request           작성한 리뷰의 정보를 담은 요청
      * @return 리뷰 엔티티
      */
     private ReviewEntity buildReviewEntity(
@@ -145,4 +174,28 @@ public class ReviewService {
                 .build();
     }
 
+    /**
+     * 리뷰 조회 및 작성자 확인
+     */
+    private ReviewEntity validateReview(
+            Long reviewId, UserEntity userEntity) {
+
+        ReviewEntity reviewEntity = this.reviewRepository.findById(reviewId)
+                .orElseThrow(NonExistReservationException::new);
+
+        // 리뷰 작성자가 맞는지 확인
+        if (!reviewEntity.getUserEntity().getId().equals(userEntity.getId())) {
+            throw new NotReviewOwnerException();
+        }
+        return reviewEntity;
+    }
+
+    /**
+     * 들어온 평점의 값이 0.5점 단위인지 학인
+     */
+    public void isValidRatingIncrement(Double rating) {
+        if (rating == null || (rating * 10) % 5 != 0) {
+            throw new NotValidRatingException();
+        }
+    }
 }
