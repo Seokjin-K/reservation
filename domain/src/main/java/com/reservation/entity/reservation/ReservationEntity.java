@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import java.util.Set;
 
@@ -54,7 +55,7 @@ public class ReservationEntity extends BaseEntity {
             fetch = FetchType.LAZY)
     private Set<ReviewEntity> reviewEntities;
 
-    public Long getStoreOwnerId(){
+    public Long getStoreOwnerId() {
         return this.getStoreEntity().getUserEntity().getId();
     }
 
@@ -103,11 +104,27 @@ public class ReservationEntity extends BaseEntity {
         if (this == o) return true;
         if (!(o instanceof ReservationEntity)) return false;
         ReservationEntity that = (ReservationEntity) o;
-        return id != null && Objects.equals(id, that.getId());
+        return Objects.equals(
+                getStoreEntity().getId(), that.getStoreEntity().getId()) &&
+                isSameTimeSlot(that.getReservationTime()
+                );
     }
 
     @Override
     public int hashCode() {
-        return getClass().hashCode();
+        // store_id와 예약 시간을 기준으로 해시코드 생성
+        return Objects.hash(getStoreEntity().getId(),
+                // 시간을 30분 단위로 나누어 해시코드 생성
+                reservationTime.truncatedTo(ChronoUnit.HOURS),
+                reservationTime.getMinute() / 30
+        );
+    }
+
+    // 같은 시간대 예약인지 확인하는 메서드
+    private boolean isSameTimeSlot(LocalDateTime otherTime) {
+        // 예약 시간 앞뒤 1시간 이내면 같은 시간대로 판단
+        return Math.abs(
+                ChronoUnit.MINUTES.between(this.reservationTime, otherTime)
+        ) < 60;
     }
 }

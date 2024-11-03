@@ -11,6 +11,6 @@ public class AlreadyExistReservationException extends AbstractException {
 
     @Override
     public String getMessage() {
-        return "이미 예약돼 있는 이름입니다.";
+        return "이미 예약돼 있는 시간입니다.";
     }
 }
