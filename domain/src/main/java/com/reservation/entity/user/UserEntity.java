@@ -7,12 +7,10 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Getter
 @Builder
@@ -41,32 +39,24 @@ public class UserEntity extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy = "userEntity",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
-    private List<StoreEntity> storeEntities;
+    private Set<StoreEntity> storeEntities;
 
     @OneToMany(mappedBy = "userEntity",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
-    private List<ReservationEntity> reservationEntities;
+    private Set<ReservationEntity> reservationEntities;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof UserEntity)) return false;
         UserEntity that = (UserEntity) o;
-        return Objects.equals(this.id, that.id) &&
-                Objects.equals(this.account, that.account) &&
-                Objects.equals(this.password, that.password) &&
-                Objects.equals(name, that.name) && userRole == that.userRole;
+        return this.id != null && Objects.equals(this.id, that.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(
-                this.id,
-                this.account,
-                this.password,
-                this.name,
-                this.userRole);
+        return getClass().hashCode();
     }
 
     @Override

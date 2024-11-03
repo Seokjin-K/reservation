@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * 매장 정보를 관리하는 엔티티
@@ -45,7 +46,7 @@ public class StoreEntity extends BaseEntity {
     @OneToMany(mappedBy = "storeEntity",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
-    private List<ReservationEntity> reservationEntities;
+    private Set<ReservationEntity> reservationEntities;
 
     // Put
     public void updateStore(
@@ -72,13 +73,13 @@ public class StoreEntity extends BaseEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof StoreEntity)) return false;
         StoreEntity that = (StoreEntity) o;
-        return Objects.equals(this.id, that.id);
+        return id != null && Objects.equals(id, that.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.id);
+        return getClass().hashCode();
     }
 }
