@@ -11,7 +11,7 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
     boolean existsByReservationEntity_Id(Long reservationId);
 
     // JPQL
-    @Query(value = "SELECT AVG(rating) FROM review WHERE store_id = :storeId",
+    @Query(value = "SELECT COALESCE(AVG(rating), 0) FROM review WHERE store_id = :storeId",
             nativeQuery = true)
     Double calculateStoreAverageRating(@Param("storeId") Long storeId);
 }
