@@ -8,10 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.h2.engine.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -24,8 +21,9 @@ public class ReviewController {
 
     /**
      * 리뷰 생성
+     *
      * @param userEntity 리뷰를 작성하는 회원의 엔티티
-     * @param request 리뷰의 정보를 담은 요청
+     * @param request    리뷰의 정보를 담은 요청
      */
     @PostMapping
     public ResponseEntity<ReviewResponse> createReview(
@@ -34,6 +32,17 @@ public class ReviewController {
     ) {
         return ResponseEntity.ok(
                 this.reviewService.createReview(userEntity, request)
+        );
+    }
+
+    @PutMapping("/{reviewId}")
+    public ResponseEntity<ReviewResponse> updateReview(
+            @AuthenticationPrincipal UserEntity userEntity,
+            @PathVariable Long reviewId,
+            @RequestBody @Valid ReviewRequest request
+    ) {
+        return ResponseEntity.ok(
+                reviewService.updateReview(userEntity, reviewId, request)
         );
     }
 }
