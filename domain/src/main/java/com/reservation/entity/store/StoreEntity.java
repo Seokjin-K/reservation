@@ -2,6 +2,7 @@ package com.reservation.entity.store;
 
 import com.reservation.entity.base.BaseEntity;
 import com.reservation.entity.reservation.ReservationEntity;
+import com.reservation.entity.review.ReviewEntity;
 import com.reservation.entity.user.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,6 +48,11 @@ public class StoreEntity extends BaseEntity {
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
     private Set<ReservationEntity> reservationEntities;
+
+    @OneToMany(mappedBy = "userEntity",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY)
+    private Set<ReviewEntity> reviewEntities;
 
     // Put
     public void updateStore(

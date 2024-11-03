@@ -1,6 +1,7 @@
 package com.reservation.entity.reservation;
 
 import com.reservation.entity.base.BaseEntity;
+import com.reservation.entity.review.ReviewEntity;
 import com.reservation.entity.store.StoreEntity;
 import com.reservation.entity.user.UserEntity;
 import lombok.AllArgsConstructor;
@@ -13,6 +14,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
+import java.util.Set;
 
 @Slf4j
 @Getter
@@ -46,6 +48,11 @@ public class ReservationEntity extends BaseEntity {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private ReservationStatus reservationStatus;
+
+    @OneToMany(mappedBy = "userEntity",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY)
+    private Set<ReviewEntity> reviewEntities;
 
     public Long getStoreOwnerId(){
         return this.getStoreEntity().getUserEntity().getId();

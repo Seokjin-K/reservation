@@ -2,6 +2,7 @@ package com.reservation.entity.user;
 
 import com.reservation.entity.base.BaseEntity;
 import com.reservation.entity.reservation.ReservationEntity;
+import com.reservation.entity.review.ReviewEntity;
 import com.reservation.entity.store.StoreEntity;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -45,6 +46,11 @@ public class UserEntity extends BaseEntity implements UserDetails {
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
     private Set<ReservationEntity> reservationEntities;
+
+    @OneToMany(mappedBy = "userEntity",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY)
+    private Set<ReviewEntity> reviewEntities;
 
     @Override
     public boolean equals(Object o) {
