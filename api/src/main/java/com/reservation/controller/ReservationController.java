@@ -5,7 +5,6 @@ import com.reservation.reservation.ReservationRequest;
 import com.reservation.reservation.ReservationResponse;
 import com.reservation.service.reservation.ReservationService;
 import lombok.RequiredArgsConstructor;
-import org.h2.engine.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
