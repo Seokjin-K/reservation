@@ -45,11 +45,11 @@ public class ReviewService {
         ReservationEntity reservationEntity = this.reservationRepository
                 .findById(request.getReservationId())
                 .orElseThrow(NonExistReservationException::new);
-        
+
         // rating 단위 검증
         isValidRatingIncrement(request.getRating());
         // 리뷰 자격 검증
-        validateReviewEligibility(userEntity, reservationEntity);
+        validateReview(userEntity, reservationEntity);
         // 중복 리뷰 검증
         validateDuplicateReview(reservationEntity.getId());
 
@@ -70,10 +70,10 @@ public class ReviewService {
      * 2. 평점이 0.5점 단위인지 확인
      * 2. 리뷰 업데이트
      * 3. 해당 매장의 평점 업데이트
-     * 
+     *
      * @param userEntity 리뷰를 수정하려는 작성자의 엔티티
-     * @param reviewId 수정하려는 리뷰의 id
-     * @param request 수정하려는 정보를 담은 요청
+     * @param reviewId   수정하려는 리뷰의 id
+     * @param request    수정하려는 정보를 담은 요청
      */
     public ReviewResponse updateReview(
             UserEntity userEntity, Long reviewId, ReviewRequest request) {
@@ -93,14 +93,25 @@ public class ReviewService {
 
     /**
      * 리뷰 삭제
-     * 1. 리뷰 자격 확인
-     * 2. 리뷰 삭제
-     * 3. 리뷰를 작성했던 매장의 평균 평점 재설정
+     * 1. 리뷰 존재하는지 확인
+     * 2. 리뷰 자격 확인
+     * 3. 리뷰 삭제
+     * 4. 리뷰를 작성했던 매장의 평균 평점 업데이트
+     *
+     * @param userEntity 리뷰 삭제를 요청한 회원
+     * @param reviewId   삭제할 리뷰 id
      */
     public Long deleteReview(UserEntity userEntity, Long reviewId) {
-        ReviewEntity reviewEntity = validateReview(reviewId, userEntity);
+        ReviewEntity reviewEntity = this.reviewRepository.findById(reviewId)
+                .orElseThrow(NonExistReviewException::new);
+
+        // 리뷰 자격 확인
+        validateDeleteReview(userEntity, reviewEntity);
+        // 리뷰 삭제
         this.reviewRepository.delete(reviewEntity);
+        // 매장의 평균 평점 업데이트
         updateStoreAverageRating(reviewEntity.getStoreEntity().getId());
+
         return reviewId;
     }
 
@@ -112,12 +123,12 @@ public class ReviewService {
      * @param userEntity        리뷰 작성자
      * @param reservationEntity 예약 정보
      */
-    private void validateReviewEligibility(
+    private void validateReview(
             UserEntity userEntity, ReservationEntity reservationEntity) {
 
         if (!reservationEntity.getUserEntity().getId()
                 .equals(userEntity.getId())) {
-            throw new NotValidReservationException();
+            throw new NonValidReservationException();
         }
 
         if (reservationEntity.getReservationStatus() !=
@@ -198,7 +209,7 @@ public class ReviewService {
 
         // 리뷰 작성자가 맞는지 확인
         if (!reviewEntity.getUserEntity().getId().equals(userEntity.getId())) {
-            throw new NotReviewOwnerException();
+            throw new NoReviewOwnerException();
         }
         return reviewEntity;
     }
@@ -208,7 +219,37 @@ public class ReviewService {
      */
     public void isValidRatingIncrement(Double rating) {
         if (rating == null || (rating * 10) % 5 != 0) {
-            throw new NotValidRatingException();
+            throw new NonValidRatingException();
+        }
+    }
+
+    /**
+     * 리뷰 자격 검증
+     * 1. 리뷰 작성자인지 확인
+     * 2. 리뷰가 작성된 매장의 주인인지 확인
+     *
+     * @param userEntity   리뷰 삭제를 요청한 회원
+     * @param reviewEntity 삭제할 리뷰의 id
+     */
+    private void validateDeleteReview(
+            UserEntity userEntity, ReviewEntity reviewEntity) {
+
+        // 리뷰 작성자인지 확인
+        boolean isReviewOwner = reviewEntity
+                .getUserEntity()
+                .getId()
+                .equals(userEntity.getId());
+
+        // 리뷰가 작성된 매장의 주인인지 확인
+        boolean isStoreOwner = reviewEntity
+                .getStoreEntity()
+                .getUserEntity()
+                .getId()
+                .equals(userEntity.getId());
+
+        // 둘 다 거짓이라면 throw
+        if (!isReviewOwner && !isStoreOwner) {
+            throw new NoDeleteAuthorityException();
         }
     }
 }
