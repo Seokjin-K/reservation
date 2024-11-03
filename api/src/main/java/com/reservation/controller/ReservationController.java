@@ -83,7 +83,7 @@ public class ReservationController {
      * @param userId 로그인된 회원의 유저의 id
      */
     @PreAuthorize("hasRole('CUSTOMER')")
-    @GetMapping
+    @GetMapping("/customer")
     public ResponseEntity<List<ReservationResponse>> getReservation(
             @AuthenticationPrincipal(expression = "id") Long userId
     ) {
@@ -99,7 +99,7 @@ public class ReservationController {
      * @param storeId    예약을 확인하려는 매장의 id
      */
     @PreAuthorize("hasRole('PARTNER')")
-    @GetMapping("{storeId}")
+    @GetMapping("/partner/{storeId}")
     public ResponseEntity<List<ReservationResponse>> getReservation(
             @AuthenticationPrincipal UserEntity userEntity,
             @PathVariable Long storeId
