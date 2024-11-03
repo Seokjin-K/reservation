@@ -11,7 +11,7 @@ public class StoreResponse {
     private String name;
     private String address;
     private String description;
-    private double rating;
+    private Double rating;
 
     public static StoreResponse from(StoreEntity storeEntity) {
         return StoreResponse.builder()
