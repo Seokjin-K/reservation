@@ -3,7 +3,7 @@ package com.reservation.exception.extend;
 import com.reservation.exception.AbstractException;
 import org.springframework.http.HttpStatus;
 
-public class AlreadyExistReservation extends AbstractException {
+public class AlreadyExistReservationException extends AbstractException {
     @Override
     public int getStatusCode() {
         return HttpStatus.BAD_REQUEST.value();
