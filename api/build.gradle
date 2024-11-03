@@ -6,9 +6,6 @@ dependencies {
     implementation project(':dto')
     implementation project(':domain')
 
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
-
-    /* Springdoc OpenAPI 라이브러리로, Swagger UI와 OpenAPI 명세를 통해 API 문서를 자동으로 생성해줍니다.
-    이 라이브러리를 사용하면 프로젝트의 REST API 문서를 쉽게 작성하고 시각적으로 확인할 수 있습니다. */
-    //implementation 'org.springdoc:springdoc-openapi-ui:1.6.15'
 }
