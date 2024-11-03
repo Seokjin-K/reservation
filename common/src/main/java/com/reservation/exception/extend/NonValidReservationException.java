@@ -3,7 +3,7 @@ package com.reservation.exception.extend;
 import com.reservation.exception.AbstractException;
 import org.springframework.http.HttpStatus;
 
-public class NotStoreOwnerException extends AbstractException {
+public class NonValidReservationException extends AbstractException {
     @Override
     public int getStatusCode() {
         return HttpStatus.BAD_REQUEST.value();
@@ -11,6 +11,6 @@ public class NotStoreOwnerException extends AbstractException {
 
     @Override
     public String getMessage() {
-        return "해당 매장의 점주가 아닙니다.";
+        return "유효하지 않은 예약입니다.";
     }
 }
