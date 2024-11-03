@@ -92,6 +92,19 @@ public class ReviewService {
     }
 
     /**
+     * 리뷰 삭제
+     * 1. 리뷰 자격 확인
+     * 2. 리뷰 삭제
+     * 3. 리뷰를 작성했던 매장의 평균 평점 재설정
+     */
+    public Long deleteReview(UserEntity userEntity, Long reviewId) {
+        ReviewEntity reviewEntity = validateReview(reviewId, userEntity);
+        this.reviewRepository.delete(reviewEntity);
+        updateStoreAverageRating(reviewEntity.getStoreEntity().getId());
+        return reviewId;
+    }
+
+    /**
      * 리뷰 작성 자격 검증
      * 1. 예약자 본인인지 확인
      * 2. 방문 완료(VISITED) 상태인지 확인

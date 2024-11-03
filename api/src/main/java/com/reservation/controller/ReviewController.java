@@ -5,7 +5,6 @@ import com.reservation.review.ReviewRequest;
 import com.reservation.review.ReviewResponse;
 import com.reservation.service.review.ReviewService;
 import lombok.RequiredArgsConstructor;
-import org.h2.engine.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +21,7 @@ public class ReviewController {
     /**
      * 리뷰 생성
      *
-     * @param userEntity 리뷰를 작성하는 회원의 엔티티
+     * @param userEntity 리뷰를 작성하는 유저 엔티티
      * @param request    리뷰의 정보를 담은 요청
      */
     @PostMapping
@@ -35,6 +34,13 @@ public class ReviewController {
         );
     }
 
+    /**
+     * 리뷰 수정
+     *
+     * @param userEntity 작성한 리뷰의 유저 id
+     * @param reviewId   작성한 리뷰의 id
+     * @param request    업데이트할 정보를 담은 요청
+     */
     @PutMapping("/{reviewId}")
     public ResponseEntity<ReviewResponse> updateReview(
             @AuthenticationPrincipal UserEntity userEntity,
@@ -42,7 +48,24 @@ public class ReviewController {
             @RequestBody @Valid ReviewRequest request
     ) {
         return ResponseEntity.ok(
-                reviewService.updateReview(userEntity, reviewId, request)
+                this.reviewService.updateReview(userEntity, reviewId, request)
+        );
+    }
+
+    /**
+     * 리뷰 삭제
+     *
+     * @param userEntity 작성한 리뷰의 유저  id
+     * @param reviewId   삭제할 리뷰의 id
+     * @return 삭제한 리뷰의 id
+     */
+    @DeleteMapping("/{reviewId}")
+    public ResponseEntity<Long> deleteReview(
+            @AuthenticationPrincipal UserEntity userEntity,
+            @PathVariable Long reviewId
+    ) {
+        return ResponseEntity.ok(
+                this.reviewService.deleteReview(userEntity, reviewId)
         );
     }
 }
