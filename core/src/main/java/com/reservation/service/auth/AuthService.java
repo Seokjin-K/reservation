@@ -53,7 +53,7 @@ public class AuthService {
     /**
      * 회원가입 메서드
      * 1. 계정 중복 체크
-     * 2. userEntity 저장
+     * 2. 비밀번호 암호화하여 userEntity 저장
      *
      * @param request
      * @return

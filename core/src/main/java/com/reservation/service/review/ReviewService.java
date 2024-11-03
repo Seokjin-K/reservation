@@ -30,14 +30,13 @@ public class ReviewService {
 
     /**
      * 새로운 리뷰를 작성
-     * 예약 상태가 'VISITED' 인 경우이고, 아직 매장에 리뷰를 안 쓴 경우
-     * 해당 매장의 평균 별점 업데이트
+     * 1. 리뷰 자격 검증
+     * 2. 중복 리뷰 검증
+     * 3. 리뷰 정보 저장
+     * 4. 해당 매장의 평균 별점 업데이트
      *
-     * @param userEntity 리뷰 작성자
+     * @param userEntity 리뷰 작성자의 엔티티
      * @param request    리뷰 작성 요청 정보
-     * @return 작성된 리뷰 정보
-     * @throws NonExistReservationException 리뷰 작성 자격이 없거나,
-     *                                      이미 작성한 경우
      */
     public ReviewResponse createReview(
             UserEntity userEntity, ReviewRequest request) {
@@ -65,8 +64,8 @@ public class ReviewService {
 
     /**
      * 리뷰 작성 자격 검증
-     * - 예약자 본인인지 확인
-     * - 방문 완료(VISITED) 상태인지 확인
+     * 1. 예약자 본인인지 확인
+     * 2. 방문 완료(VISITED) 상태인지 확인
      *
      * @param userEntity        리뷰 작성자
      * @param reservationEntity 예약 정보
@@ -88,6 +87,8 @@ public class ReviewService {
     /**
      * 중복 리뷰 검증
      * 하나의 예약당 하나의 리뷰만 작성 가능
+     *
+     * @param reservationId 해당 예약의 id
      */
     private void validateDuplicateReview(Long reservationId) {
         if (this.reviewRepository.existsByReservationEntity_Id(reservationId)) {
@@ -97,6 +98,8 @@ public class ReviewService {
 
     /**
      * 매장의 평균 평점 업데이트
+     *
+     * @param storeId 리뷰를 작성한 매장의 id
      */
     private void updateStoreAverageRating(Long storeId) {
         Double rating =
@@ -112,6 +115,16 @@ public class ReviewService {
         log.info("\u001B[32mrating update  -> {}", rating + "\u001B[0m");
     }
 
+    /**
+     * 리뷰 엔티티를 빌드 패턴으로 생성
+     * 1. rating null 체크
+     * 2. 빌드 패턴으로 리뷰 엔티티 생성
+     *
+     * @param userEntity 리뷰를 작성한 유저의 엔티티
+     * @param reservationEntity 리류를 작성할 예약 엔티티
+     * @param request 작성한 리뷰의 정보를 담은 요청
+     * @return 리뷰 엔티티
+     */
     private ReviewEntity buildReviewEntity(
             UserEntity userEntity,
             ReservationEntity reservationEntity,

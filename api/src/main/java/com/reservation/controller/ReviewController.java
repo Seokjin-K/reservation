@@ -22,6 +22,11 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
+    /**
+     * 리뷰 생성
+     * @param userEntity 리뷰를 작성하는 회원의 엔티티
+     * @param request 리뷰의 정보를 담은 요청
+     */
     @PostMapping
     public ResponseEntity<ReviewResponse> createReview(
             @AuthenticationPrincipal UserEntity userEntity,

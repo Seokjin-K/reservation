@@ -20,7 +20,7 @@ public enum ReservationStatus {
 
     /**
      * 1. Enum 의 모든 값을 stream 으로 변환
-     * 2. 이름이 일치하는 값 필터링
+     * 2. 이름이 일치하는 값 필터링(대문자로 변환)
      * 3. 첫 번째 일치하는 값 반환(Optional)
      * 4. 값이 없으면 예외 발생
      */
