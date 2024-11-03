@@ -1,7 +1,11 @@
 package com.reservation.repository.store;
 
 import com.reservation.entity.store.StoreEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,5 +18,6 @@ public interface StoreRepository extends JpaRepository<StoreEntity, Long> {
 
     Optional<StoreEntity> findById(Long id);
 
-    List<StoreEntity> findByNameContaining(String name);
+    Page<StoreEntity> findByNameContaining(String keyword, Pageable pageable);
+
 }

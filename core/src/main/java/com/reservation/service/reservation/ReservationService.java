@@ -96,7 +96,11 @@ public class ReservationService {
         ReservationEntity reservationEntity =
                 validateReservation(userId, reservationId);
 
-        reservationEntity.patchStatus(ReservationStatus.from(status));
+        ReservationStatus reservationStatus = ReservationStatus.from(status);
+        if (reservationStatus == null) {
+            throw new NoExistStatusException();
+        }
+        reservationEntity.patchStatus(reservationStatus);
 
         log.info("\u001B[32mstatus -> {}",
                 reservationEntity.getReservationStatus() + "\u001B[0m");
@@ -228,7 +232,7 @@ public class ReservationService {
      * - 유효하지 않다면 상태를 'NO_SHOW'로 변경
      * 3. 유효하다면 상태를 'VISITED' 로 변경
      *
-     * @param storeId 방문한 매장의 id
+     * @param storeId       방문한 매장의 id
      * @param reservationId 확인할 예약의 id
      */
     public ReservationResponse checkIn(Long storeId, Long reservationId) {

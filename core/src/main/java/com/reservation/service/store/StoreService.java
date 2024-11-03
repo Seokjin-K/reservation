@@ -3,6 +3,7 @@ package com.reservation.service.store;
 import com.reservation.entity.store.StoreEntity;
 import com.reservation.entity.user.UserEntity;
 import com.reservation.exception.extend.AlreadyExistStoreException;
+import com.reservation.exception.extend.NoExistStatusException;
 import com.reservation.exception.extend.NonExistStoreException;
 import com.reservation.exception.extend.NoStoreOwnerException;
 import com.reservation.repository.store.StoreRepository;
@@ -10,6 +11,8 @@ import com.reservation.store.StoreRequest;
 import com.reservation.store.StoreResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,22 +58,20 @@ public class StoreService {
     }
 
     /**
-     * 매장의 이름으로 매장 검색
+     * keyword 로 매장 검색
      * 매장 이름에서 일부분 일치하는 매장의 정보 모두 반환
      *
-     * @param storeName 찾으려는 매장의 이름(또는 일부분)
-     * @return StoreResponse
+     * @param keyword  검색 키워드
+     * @param pageable Pageable 정보
      */
     @Transactional(readOnly = true)
-    public List<StoreResponse> getStore(String storeName) {
-        List<StoreEntity> storeEntityList =
-                this.storeRepository.findByNameContaining(storeName);
+    public Page<StoreResponse> getStore(String keyword, Pageable pageable) {
 
-        log.info("\u001B[32mget store -> {}", storeName + "\u001B[0m");
+        Page<StoreEntity> storeEntities =
+                this.storeRepository.findByNameContaining(keyword, pageable);
 
-        return storeEntityList.stream()
-                .map(StoreResponse::from)
-                .collect(Collectors.toList());
+        log.info("\u001B[32mget store -> {}", keyword + "\u001B[0m");
+        return storeEntities.map(StoreResponse::from);
     }
 
     /**

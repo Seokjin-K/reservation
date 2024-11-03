@@ -26,8 +26,8 @@ public enum ReservationStatus {
      */
     public static ReservationStatus from(String status) {
         return Arrays.stream(ReservationStatus.values())
-                .filter(s -> s.name().equals(status.toUpperCase()))
+                .filter(stream -> stream.name().equals(status.toUpperCase()))
                 .findFirst()
-                .orElseThrow(RuntimeException::new);
+                .orElse(null);
     }
 }
