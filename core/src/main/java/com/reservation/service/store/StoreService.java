@@ -4,9 +4,8 @@ import com.reservation.entity.store.StoreEntity;
 import com.reservation.entity.user.UserEntity;
 import com.reservation.exception.extend.AlreadyExistStoreException;
 import com.reservation.exception.extend.NonExistStoreException;
-import com.reservation.exception.extend.NonExistUserException;
+import com.reservation.exception.extend.NotStoreOwnerException;
 import com.reservation.repository.store.StoreRepository;
-import com.reservation.repository.user.UserRepository;
 import com.reservation.store.StoreRequest;
 import com.reservation.store.StoreResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,26 +22,22 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class StoreService {
 
-    private final UserRepository userRepository;
     private final StoreRepository storeRepository;
     private final AutocompleteService autoCompleteService;
 
     /**
      * 매장 등록
-     * 1. 존재하는 유저인지 검증
-     * 2. 이미 존재하는 매장이 없는지 검증
-     * 3. 모든 검증을 통과하면 매장 저장
+     * 1. 이미 존재하는 매장이 없는지 검증
+     * 2. 생성하려는 매장의 엔티티 생성
+     * 3. 매장 저장
      * 4. 자동완성을 위한 매장 정보 추가
      *
-     * @param userId
-     * @param request
+     * @param userEntity 로그인한 유저의 엔티티
+     * @param request    생성하려는 매장 정보
      * @return StoreResponse
      */
     public StoreResponse createStore(
-            Long userId, StoreRequest request) {
-
-        UserEntity userEntity = this.userRepository.findById(userId)
-                .orElseThrow(NonExistUserException::new);
+            UserEntity userEntity, StoreRequest request) {
 
         if (this.storeRepository.existsByNameAndAddress(
                 request.getName(), request.getAddress())) {
@@ -61,9 +56,9 @@ public class StoreService {
 
     /**
      * 매장의 이름으로 매장 검색
-     * 일부분 일치하는 매장의 정보 모두 반환
+     * 매장 이름에서 일부분 일치하는 매장의 정보 모두 반환
      *
-     * @param storeName
+     * @param storeName 찾으려는 매장의 이름(또는 일부분)
      * @return StoreResponse
      */
     @Transactional(readOnly = true)
@@ -80,23 +75,25 @@ public class StoreService {
 
     /**
      * request 의 정보로 매장 정보 업데이트
-     * 1. userId를 통해 유효한 회원인지 검사
-     * 2. storeId를 통해 유효한 매장인지 검사
-     * 3. 자동완성 업데이트
-     * 4. 매장 정보 업데이트
+     * 1. storeId를 통해 유효한 매장인지 검사
+     * 2. 현재 로그인된 엔티티가 업데이트 하려는 매장의 주인인지 검사
+     * 3. 매장 정보 업데이트
+     * 4. 자동완성 업데이트
      *
-     * @param storeId
-     * @param request
+     * @param userEntity 현재 로그인된 유저의 엔티티
+     * @param storeId    업데이트하려는 매장의 id
+     * @param request    업데이트할 매장의 정보
      */
     public StoreResponse updateStore(
-            Long userId, Long storeId, StoreRequest request) {
-
-        UserEntity userEntity = this.userRepository.findById(userId)
-                .orElseThrow(NonExistUserException::new);
+            UserEntity userEntity, Long storeId, StoreRequest request) {
 
         // 조회하는 순간 영속성 컨텍스트가 이 엔티티를 관리하기 시작
         StoreEntity storeEntity = storeRepository.findById(storeId)
                 .orElseThrow(NonExistStoreException::new);
+
+        if (!storeEntity.getUserEntity().equals(userEntity)) {
+            throw new NotStoreOwnerException();
+        }
 
         // 엔티티 수정 -> 영속성 컨텍스트가 변경 감지
         storeEntity.updateStore(
@@ -104,7 +101,6 @@ public class StoreService {
                 request.getName(),
                 request.getAddress(),
                 request.getDescription()
-
                 // 트랜잭션 종료 시점에 영속성 컨텍스트는 변경된 엔티티를 감지
                 // update 쿼리를 자동으로 실행
         );
@@ -119,27 +115,25 @@ public class StoreService {
 
     /**
      * 매장 삭제
-     * 1. userId와 storeId를 통해 유효한 매장인지 검사
+     * 1. userEntity, storeId를 통해 유효한 매장인지 검사
      * 2. 매장 삭제
      * 3. 자동완성 삭제
      *
-     * @param userId
-     * @param storeId
+     * @param userEntity 로그인된 유저의 엔티티
+     * @param storeId    삭제하려는 매장의 id
      */
-    public String deleteStore(Long userId, Long storeId) {
-
-        UserEntity userEntity = this.userRepository.findById(userId)
-                .orElseThrow(NonExistUserException::new);
+    public String deleteStore(UserEntity userEntity, Long storeId) {
 
         StoreEntity storeEntity = this.storeRepository.findById(storeId)
                 .orElseThrow(NonExistStoreException::new);
 
-        if (!userEntity.getStoreEntities().contains(storeEntity)) {
-            throw new NonExistStoreException();
+        if (!storeEntity.getUserEntity().equals(userEntity)) {
+            throw new NotStoreOwnerException();
         }
 
         this.storeRepository.delete(storeEntity);
-        this.autoCompleteService.deleteAutocompleteKeyword(storeEntity.getName());
+        this.autoCompleteService.deleteAutocompleteKeyword(
+                storeEntity.getName());
 
         log.info("\u001B[32mdelete store  -> {}", storeEntity.getName()
                 + "\u001B[0m");
@@ -149,7 +143,8 @@ public class StoreService {
     /**
      * buildStoreEntity 빌더 패턴으로 생성
      *
-     * @param request
+     * @param userEntity 해당 매장의 주인인 유저의 엔티티
+     * @param request    매장 정보
      * @return StoreEntity
      */
     private StoreEntity buildStoreEntity(
