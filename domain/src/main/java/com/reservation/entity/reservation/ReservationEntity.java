@@ -47,6 +47,10 @@ public class ReservationEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ReservationStatus reservationStatus;
 
+    public Long getStoreOwnerId(){
+        return this.getStoreEntity().getUserEntity().getId();
+    }
+
     public void patchStatus(ReservationStatus status) {
         this.reservationStatus = status;
     }
@@ -90,13 +94,13 @@ public class ReservationEntity extends BaseEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof ReservationEntity)) return false;
         ReservationEntity that = (ReservationEntity) o;
-        return Objects.equals(this.id, that.id);
+        return id != null && Objects.equals(id, that.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.id);
+        return getClass().hashCode();
     }
 }
