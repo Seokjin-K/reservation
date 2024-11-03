@@ -15,8 +15,11 @@ import com.reservation.review.ReviewRequest;
 import com.reservation.review.ReviewResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 @Slf4j
 @Service
@@ -113,6 +116,17 @@ public class ReviewService {
         updateStoreAverageRating(reviewEntity.getStoreEntity().getId());
 
         return reviewId;
+    }
+
+    /**
+     * 매장의 리뷰 목록을 조회
+     * 최신 작성순으로 정렬 및 페이징 처리
+     */
+    @Transactional(readOnly = true)
+    public Page<ReviewResponse> getStoreReviews(Long storeId, Pageable pageable) {
+        return this.reviewRepository
+                .findByStoreEntity_IdOrderByCreated_AtDesc(storeId, pageable)
+                .map(ReviewResponse::from);
     }
 
     /**
