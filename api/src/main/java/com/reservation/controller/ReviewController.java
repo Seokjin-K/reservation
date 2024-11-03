@@ -7,6 +7,7 @@ import com.reservation.service.review.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
@@ -28,6 +29,7 @@ public class ReviewController {
      * @param userEntity 리뷰를 작성하는 유저 엔티티
      * @param request    리뷰의 정보를 담은 요청
      */
+    @PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping
     public ResponseEntity<ReviewResponse> createReview(
             @AuthenticationPrincipal UserEntity userEntity,
@@ -45,6 +47,7 @@ public class ReviewController {
      * @param reviewId   작성한 리뷰의 id
      * @param request    업데이트할 정보를 담은 요청
      */
+    @PreAuthorize("hasRole('CUSTOMER')")
     @PutMapping("/{reviewId}")
     public ResponseEntity<ReviewResponse> updateReview(
             @AuthenticationPrincipal UserEntity userEntity,
