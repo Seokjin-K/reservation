@@ -119,7 +119,7 @@ public class ReservationService {
                         .orElseThrow(NonExistReservationException::new);
 
         if (!Objects.equals(reservationEntity.getStoreOwnerId(), userId)) {
-            throw new NotStoreOwnerException();
+            throw new NoStoreOwnerException();
         }
         return reservationEntity;
     }
@@ -162,7 +162,7 @@ public class ReservationService {
                         .orElseThrow(NonExistReservationException::new);
 
         if (!Objects.equals(reservationEntity.getUserEntity().getId(), userId)) {
-            throw new NonReservationOwnerException();
+            throw new NoReservationOwnerException();
         }
         return reservationEntity;
     }
@@ -208,7 +208,7 @@ public class ReservationService {
                 .orElseThrow(NonExistStoreException::new);
 
         if (!storeEntity.getUserEntity().equals(userEntity)) {
-            throw new NotStoreOwnerException();
+            throw new NoStoreOwnerException();
         }
 
         log.info("\u001B[32mget partner reservation -> {}", storeId + "\u001B[0m");
@@ -234,12 +234,12 @@ public class ReservationService {
     public ReservationResponse checkIn(Long storeId, Long reservationId) {
         ReservationEntity reservationEntity = this.reservationRepository
                 .findByIdAndStoreEntity_Id(reservationId, storeId)
-                .orElseThrow(NonReservationOfStoreException::new);
+                .orElseThrow(NoReservationOfStoreException::new);
 
         // 유효한 예약인지 검증
         if (!reservationEntity.isValidReservation()) {
             reservationEntity.patchStatus(ReservationStatus.NO_SHOW);
-            throw new NotValidReservationException();
+            throw new NonValidReservationException();
         }
         reservationEntity.patchStatus(ReservationStatus.VISITED);
 

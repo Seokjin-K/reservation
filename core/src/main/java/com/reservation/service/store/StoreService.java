@@ -4,7 +4,7 @@ import com.reservation.entity.store.StoreEntity;
 import com.reservation.entity.user.UserEntity;
 import com.reservation.exception.extend.AlreadyExistStoreException;
 import com.reservation.exception.extend.NonExistStoreException;
-import com.reservation.exception.extend.NotStoreOwnerException;
+import com.reservation.exception.extend.NoStoreOwnerException;
 import com.reservation.repository.store.StoreRepository;
 import com.reservation.store.StoreRequest;
 import com.reservation.store.StoreResponse;
@@ -92,7 +92,7 @@ public class StoreService {
                 .orElseThrow(NonExistStoreException::new);
 
         if (!storeEntity.getUserEntity().equals(userEntity)) {
-            throw new NotStoreOwnerException();
+            throw new NoStoreOwnerException();
         }
 
         // 엔티티 수정 -> 영속성 컨텍스트가 변경 감지
@@ -128,7 +128,7 @@ public class StoreService {
                 .orElseThrow(NonExistStoreException::new);
 
         if (!storeEntity.getUserEntity().equals(userEntity)) {
-            throw new NotStoreOwnerException();
+            throw new NoStoreOwnerException();
         }
 
         this.storeRepository.delete(storeEntity);
