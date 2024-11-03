@@ -9,13 +9,13 @@ import lombok.Getter;
 public class ReviewResponse {
     private Long reviewId;
     private String content;
-    private double score;
+    private Double rating;
 
     public static ReviewResponse from(ReviewEntity reviewEntity) {
         return ReviewResponse.builder()
                 .reviewId(reviewEntity.getId())
                 .content(reviewEntity.getContent())
-                .score(reviewEntity.getScore())
+                .rating(reviewEntity.getRating())
                 .build();
     }
 }

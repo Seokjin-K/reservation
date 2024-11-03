@@ -48,7 +48,7 @@ public class ReviewEntity extends BaseEntity {
     /**
      * 실제 평점값(0.0~5.0)을 반환
      */
-    public double getScore() {
+    public double getRating() {
         return Rating.fromValue(this.rating).getRating();
     }
 

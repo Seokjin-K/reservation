@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -54,7 +53,7 @@ public class ReservationService {
                 request, userEntity, storeEntity);
 
         if (storeEntity.getReservationEntities().contains(reservationEntity)) {
-            throw new AlreadyExistReservation();
+            throw new AlreadyExistReservationException();
         }
 
         reservationRepository.save(reservationEntity);
